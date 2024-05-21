@@ -111,11 +111,34 @@
 # funct_context(line1, line2, line3)
 
 #Створіть функцію, яка приймає список слів і повертає список слів, які містять п'ять або більше літер та починаються з голосної (a, e, i, o, u).
+# def words(list_words):
+#     wolves = ['a', 'e', 'i', 'o', 'u', 'y']
+#     new_word_list = []
+#     for wolv in wolves:
+#         for word in list_words:
+#             if word.startswith(str(wolv)) and len(word) >= 5:
+#                 new_word_list.append(word)
+#     print(new_word_list)
+#
+#
+# list_words = ['exception', 'argument', 'file', 'lection', 'arch', 'occlusion', 'alter']
+# words(list_words)
 
 #Напишіть функцію, яка отримує речення як рядок і повертає кількість слів у цьому реченні.
 
+
+# def sentences(str_sentences):
+#     words = len(str_sentences.split())
+#     print(words)
+#
+#
+# str_sentences = 'some sentence for example'
+# sentences(str_sentences)
+
 #Напишіть функцію, яка приймає на вхід два словника. Значення у словника обовʼязково число. Задача повернути новий словник, де будуть всі ключі з першого та другого словника,
-#а у випадку якщо ключ є і там і там потрібно додати значення за цим ключем в першого та другого словника до результату.
+# а у випадку якщо ключ є і там і там потрібно додати значення за цим ключем в першого та другого словника до результату.
+
+
 
 #Напишіть функцію, яка приймає два рядки і повертає True, якщо вони є анаграмами (тобто містять однакові букви в різному порядку), і False - в іншому випадку.
 
@@ -127,6 +150,25 @@
 
 #Напишіть функцію, яка приймає список рядків і повертає новий список, в якому всі рядки переведені у верхній регістр.
 
+
+def list_line(list):
+     lst2= str(()upper())
+     print(lst2)
+
+
+lst = ['word', 'world', 'letter', 'character', 'symbol']
+list_line(list)
+
 #Напишіть функцію, яка отримує речення у вигляді рядка і повертає нове речення,
 # в якому перша буква кожного слова пишеться з великої літери. Використовуйте метод split, щоб розбити речення на слова, і метод capitalize, щоб зробити першу літеру великою.
+
+
+# def new_sentence(sentence):
+#     changed_sentence = sentence.split()
+#     for element in changed_sentence:
+#         print(element.capitalize())
+#
+#
+# sentence = 'sentence for example'
+# new_sentence(sentence)
 
