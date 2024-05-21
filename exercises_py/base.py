@@ -135,38 +135,83 @@
 # str_sentences = 'some sentence for example'
 # sentences(str_sentences)
 
-#Напишіть функцію, яка приймає на вхід два словника. Значення у словника обовʼязково число. Задача повернути новий словник, де будуть всі ключі з першого та другого словника,
+# Напишіть функцію, яка приймає на вхід два словника. Значення у словника обовʼязково число. Задача повернути новий словник, де будуть всі ключі з першого та другого словника,
 # а у випадку якщо ключ є і там і там потрібно додати значення за цим ключем в першого та другого словника до результату.
 
+def uniq_dict(dict1, dict2):
+     pass
 
 
-#Напишіть функцію, яка приймає два рядки і повертає True, якщо вони є анаграмами (тобто містять однакові букви в різному порядку), і False - в іншому випадку.
+dict1 = {'а': 1, 'б': 2, 'в': 3}
+dict2 = {'б': 4, 'в': 5, 'г': 6}
+uniq_dict(dict1,dict2)
 
-#Напишіть функцію, яка обчислює факторіал заданого числа і повертає результат.
+# Напишіть функцію, яка приймає два рядки і повертає True, якщо вони є анаграмами (тобто містять однакові букви в різному порядку), і False - в іншому випадку.
 
-#Напишіть функцію, яка перевіряє, чи є задане число простим, і повертає True або False.
+# def anagram(word1, word2):
+#      changed_word1 = sorted(list(word1))
+#      changed_word2 = sorted(list(word2))
+#      if changed_word1 == changed_word2:
+#           print('True')
+#      else:
+#           print('False')
+#
+#
+# word1 = 'evil'
+# word2 = 'live'
+# anagram(word1, word2)
+
+# # Напишіть функцію, яка обчислює факторіал заданого числа і повертає результат.
+# def factorial(num):
+#      i = 1
+#      while num > 0:
+#           i *= num
+#           num -= 1
+#      print(i)
+#
+#
+# num = 10
+# factorial(num)
+
+# Напишіть функцію, яка перевіряє, чи є задане число простим, і повертає True або False.
+
+# def simple_number(lst_num):
+#      if lst_num % 2 != 0 or lst_num == 2:
+#           print('True, number is simple')
+#      else:
+#           print('False, number is not simple')
+#
+#
+# lst_numb = int(input('Enter a number: '))
+#
+# simple_number(lst_numb)
 
 #Напишіть функцію, яка приймає список чисел і повертає найбільше число зі списку. Функцію max використовувати не можна.
 
+# def max_num(lst_num):
+#      lst_num.sort(reverse=True)
+#      print(lst_num[0])
+#
+# lst_num = [1, 24, 35, 47, 5, 62, 74, 48, 49]
+# max_num(lst_num)
+
 #Напишіть функцію, яка приймає список рядків і повертає новий список, в якому всі рядки переведені у верхній регістр.
 
-
-def list_line(list):
-     lst2= str(()upper())
-     print(lst2)
-
-
-lst = ['word', 'world', 'letter', 'character', 'symbol']
-list_line(list)
+# def list_line(list):
+#      lst2= str(lst).upper()
+#      print(lst2)
+#
+#
+# lst = ['word', 'world', 'letter', 'character', 'symbol']
+# list_line(list)
 
 #Напишіть функцію, яка отримує речення у вигляді рядка і повертає нове речення,
 # в якому перша буква кожного слова пишеться з великої літери. Використовуйте метод split, щоб розбити речення на слова, і метод capitalize, щоб зробити першу літеру великою.
 
-
 # def new_sentence(sentence):
 #     changed_sentence = sentence.split()
 #     for element in changed_sentence:
-#         print(element.capitalize())
+#         print(element.capitalize(), end=' ')
 #
 #
 # sentence = 'sentence for example'
