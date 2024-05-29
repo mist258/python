@@ -20,60 +20,51 @@
 # Input:"p"
 # Output:"apple"
 # Output:"Вітаю, ви вгадали слово"
+
 import random as rn
 
 
-def randoms():
-
-    words_list = ['apple']
-    random_word = rn.choice(words_list)
-
-    return random_word
-
-
-randoms()
+words = ['linux']
+random_word = rn.choice(words)
 
 
 def wonder_field():
-    random_value = randoms()
 
-    number_of_attempts = int(input('How many attempts do you want? Enter number:'))
+    guessed_letters = list()
 
-    while number_of_attempts:
+    numbers_of_attempts = int(input('How many attempts do you want? Enter number:'))
+
+    while numbers_of_attempts > 0:
 
         word_or_letter = input('Enter a word or letter: ').lower()
 
-        if word_or_letter == random_value:
-            print(f'You guessed {random_value}')
+        if word_or_letter == random_word:
+            print(f'You\'ve guessed word - {random_word}')
             break
-        elif len(word_or_letter) > 1 and word_or_letter != random_value:
-            print('Try again')
-            number_of_attempts -= 1
+        elif word_or_letter != random_word and len(word_or_letter) > 1:
+            print('You don\'t guessed the word')
+            numbers_of_attempts -= 1
 
         if len(word_or_letter) == 1:
-            if word_or_letter in random_value:
-                guessed_word.append(word_or_letter)
-                print('You guessed letter ')
-                number_of_attempts -= 1
-            else:
-                number_of_attempts -= 1
 
-        elif number_of_attempts == 0:
-            return 'You lost'
+            if word_or_letter not in random_word:
+                print(f'{word_or_letter} is wrong letter, try next time')
+                numbers_of_attempts -= 1
 
+            if word_or_letter in random_word:
+                guessed_letters.append(word_or_letter)
+                print(f'You\'ve  guessed letter - {word_or_letter}')
+                numbers_of_attempts -= 1
 
-guessed_word = []
+        guessed_word = ''.join([letters if letters in guessed_letters else '*' for letters in random_word])
+        print(guessed_word)
+
+        if guessed_word == random_word:
+            print(f'You\'ve guessed the word - {random_word}')
+            break
+
+        if numbers_of_attempts == 0 and guessed_word != random_word:
+            print('Try another one')
+
 
 wonder_field()
-
-
-def word(guessed_word):
-
-    return ''.join(letter if letter in guessed_word else '*' for letter in guessed_word)
-
-
-print(word(guessed_word))
-
-
-
-
