@@ -15,42 +15,53 @@
 # Важливо! Використовуйте все, атрибути класу, атрибути інстансу, клас методи та статик методи, проперті, приватні та протектед атрибути.
 
 import re
-from abc import ABC, abstractmethod
-from email_validator import validate_email, EmailNotValidError
 
 
 class Library:
-    def __init__(self):
+    __slots__ = ('books', 'users',)
+
+    def __init__(self,):
         self.books = []
         self.users = []
 
     def update_book_copies(self):
         pass
 
-    def register_user(self):
+    def register_user(self): # delay
+        pass
+
+    def show_available_books(self):
         pass
 
 
-
 class FirstLibrary(Library):
-    pass
+
+    def __init__(self): # initialize parent attr 'self.books = []', 'self.users = []'
+        super().__init__()
+
+    def update_book_copies(self): # polymorfism
+        ...
 
 
 class SecondLibrary(Library):
-    pass
+    def __init__(self): # initialize parent attr 'self.books = []', 'self.users = []'
+        super().__init__()
+
+    def update_book_copies(self): # polymorfism
+        ...
 
 
 class Book:
-    __slots__ = ('title', 'author', '__isbn', 'copies', 'total_copies')
+    __slots__ = ('__title', '__author', '__isbn', '__copies', '__total_copies')
 
     def __init__(self, title, author, isbn):
         self.validate_isbn(isbn)
 
-        self.title = title
-        self.author = author
+        self.__title = title
+        self.__author = author
         self.__isbn = isbn
-        self.copies = 0 # only one library
-        self.total_copies = 0 # in all available libraries
+        self.__copies = 0 # only one library
+        self.__total_copies = 0 # in all available libraries
 
     @classmethod
     def validate_isbn(cls, isbn):
@@ -63,39 +74,4 @@ class Book:
 
     def update_total_copies(self): # update current books copies in all libraries
         pass
-
-
-class User:
-    def __init__(self, name, user_id, email, phone_numer):
-        self.validate_email(email)
-
-        self.__name = name
-        self.__user_id = user_id
-        self.__email = email
-        self.__phone_number = phone_numer
-
-    @classmethod
-    def validate_email(cls, email):
-        try:
-            valid = validate_email(email)
-            return valid.email
-        except:
-            raise EmailNotValidError('Invalid email')
-
-
-class Customer(User):
-    def __init__(self, name, user_id, email, phone_number):
-        super().__init__(name, user_id, email, phone_number)
-        self.borrowed_books = []
-
-    def __str__(self):
-        return f'Customer:\nName: {self.__name}, Id: {self.__user_id}, Email: {self.__email}, Phone number: {self.__phone_number}'
-
-
-class Employee(User):
-    def __init__(self, name, user_id, email, phone_number, salary):
-        super().__init__(name, user_id, email, phone_number)
-        self.salary = salary
-
-
 
