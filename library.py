@@ -50,21 +50,19 @@ class Book:
         return f'Book:\nTitle: {self.__title}, Author:{self.__author}, ISBN:{self.__isbn}'
 
 
-class Library:
-    __slots__ = ('books', 'users',)
+class Library(Book):
 
     def __init__(self,):
-        self.books = []
-        self.users = []
+        object.__setattr__(self, 'books', [])
 
-    def add_initial_books_lst(self, books_lst): # added general list of books
+    def add_initial_books_lst(self, books_lst): # added initial and general list of books
         self.books.extend(books_lst)
 
     def register_user(self): # delay
         pass
 
     def show_available_books(self): # show available books in all libraries
-        pass
+        return f'Available Books:\n{self.books}'
 
 
 class PublicLibrary(Library, Book):
@@ -101,14 +99,14 @@ class Customer(User):
     def __init__(self, _name, _user_id, _user_email):
         super().__init__(_name, _user_id, _user_email)
 
-    def show_borrowed_books(self): #show all borrowed books
+    def show_borrowed_books(self): #show all books borrowed by Customers
         return f'Borrowed books: {self.borrowed_books}'
 
     def __str__(self):
         return f'Customer:\nName: {self._name}, User email: {self._user_email}, User id: {self._user_id}, books: {self.borrowed_books}'
 
 
-class Employee(User):
+class Employee(User, Library):
     pass
 # salary, payment
 
@@ -125,16 +123,18 @@ def delete_book(self):
 
 # cus = Customer('name', 7, 'any.email@gmail.com')
 # print(cus)
-library_books_lst: list[Book:[]] = [
+books_lst: list[Book:[]] = [
     ['The Last Wish', 'Andrzej Sapkowski', '978-0-316-05587-6'],
     ['Sword of Destiny', 'Andrzej Sapkowski', '978-0-316-27805-7'],
     ['Blood of Elves', 'Andrzej Sapkowski', '978-0-575-08636-0'],
     ['Time of Contempt', 'Andrzej Sapkowski', '978-0-575-08637-7'],
     ['Sword of Destiny', 'Andrzej Sapkowski', '978-0-316-27805-7'],
+    ['Sword of Destiny', 'Andrzej Sapkowski', '978-0-316-27805-7'],
     ['Baptism of Fire', 'Andrzej Sapkowski', '978-0-575-08678-0']]
 library = Library()
-library.add_initial_books_lst(library_books_lst)
-print(library.books)
+library.add_initial_books_lst(books_lst)
+# print(library.books)
+print(library.show_available_books())
 
 
 
