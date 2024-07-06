@@ -6,140 +6,169 @@
 # *******5.Клас повинен мати метод validate_isbn який буде валідувати правильність isbn коду(ISBN 0-061-96436-0). 	978-3-16-148410-0
 #Part 2 LIBRARY
 # *******1.Клас Library буде мати поля books, users.
-# 2.Методи які дозволять зареєструвати юзера у бібліотеці
-# *******3.Методи які дозволять знайти книжку за isbn.
+# *******2.Методи які дозволять зареєструвати юзера у бібліотеці
+# 3.Методи які дозволять знайти книжку за isbn.
 # 4.Методи які дозволять показати всі доступні книжки у бібліотеці.
 #*********
 #Part 3 USER
-# 1.Клас User повинен мати такі атрибути як name, user_id.
+# *******1.Клас User повинен мати такі атрибути як name, user_id.
 # 2.Інфа про функціонал для Customer та Employee, де ви самі повинні розібратись які атрибути де мають бути та як це буде виглядати.
 # 3.Атрибути borrowed_books, salary, library.
 # 4.Методи для взяття книжки з бібліотеки, та повернення.
 # 5.Методи для додавання книжки у бібліотеку та видаленню.
 import re
-from dataclasses import dataclass, field
+from abc import ABC, abstractmethod
 
 
-@dataclass(frozen=True)
 class Book:
+    def __init__(self, title, author, isbn):
+        self.valid_isbn(isbn)
 
-    __title: str
-    __author: str
-    __isbn: str
-    __copies: 0 = field(init=False)# only one library
-    __total_copies: 0 = field(init=False)# in all available libraries
+        self._title = title
+        self._author = author
+        self.__isbn = isbn
+        self._copies = 0 # only one library
+        self._total_copies = 0 # in all available libraries
 
-    def __post_init__(self):
+    @classmethod
+    def valid_isbn(cls, isbn): # checks for ISBN validity
         pattern_isbn = r'^(?:\d{3})-(?:\d{1,5})-(?:\d{1,7})-(?:\d{1,7})-(?:\d{1})$' #since 2007 ISBN contains 13 digits
-        if not re.fullmatch(pattern_isbn, self.__isbn):
+        if not re.fullmatch(pattern_isbn, isbn):
             raise ValueError('Invalid ISBN number')
 
-    def check_availability(self, isbn): # check whether the book is available in library using ISBN
-        if self.__isbn != isbn:
-            raise ValueError('Invalid ISBN number or ISBN does not exist')
-        else:
-            self.__copies += 1
+    # def get_isbn(self):
+    #     return self.__isbn
+
+    def check_availability(self): # check whether the book is available in library using ISBN
+        pass
 
     def update_total_copies(self): # update current books copies in all libraries
         pass # total_copies = 0
 
-    def get_isbn(self):
-        return self.__isbn
+    def update_copies(self): #updates copies in only one library
+        pass
 
     def __str__(self):
-        return f'Book:\nTitle: {self.__title}, Author:{self.__author}, ISBN:{self.__isbn}'
+        return f'Book:\nTitle: {self._title}, Author:{self._author}, ISBN:{self.__isbn}'
 
 
-class Library(Book):
+class User(ABC):
+    __slots__ = ('_name', '_user_id', '_user_email')
 
-    def __init__(self,):
-        object.__setattr__(self, 'books', [])
+    def __init__(self, name, user_id, user_email):
 
-    def add_initial_books_lst(self, books_lst): # added initial and general list of books
-        self.books.extend(books_lst)
+        self._name = name
+        self._user_id = user_id
+        self._user_email = user_email
 
-    def register_user(self): # delay
+
+class Methods(ABC): # contain abc methods
+    @abstractmethod
+    def show_borrowed_books(self):
         pass
+
+    @abstractmethod
+    def delete_book(self):
+        pass
+    # using del and ISBN
+
+
+class Library: # general class Library
+    def __init__(self):
+        self._users: list[User] = []
+        self._library1: list[Book] = [] # unique book list for lib1
+        self._library2: list[Book] = [] # unique book list for lib2
+        self._books: list[Book] = self._library1 + self._library2 # list of all books
+        self._borrowed_books: list = []
+
+    def register_user(self, customer: User):
+        if not isinstance(customer, User):
+            raise TypeError('Customer must be of type User')
+        elif customer not in self._users:
+            self._users.append(customer)
+        else:
+            raise ValueError('Customer already registered')
 
     def show_available_books(self): # show available books in all libraries
-        return f'Available Books:\n{self.books}'
-
-
-class PublicLibrary(Library, Book):
-
-    def __init__(self): # initialize parent attr 'self.books = []', 'self.users = []'
-        super().__init__()
-
-    def update_book_copies(self): # polymorfism
-        ...
-
-
-class PrivateLibrary(Library, Book):
-    def __init__(self): # initialize parent attr 'self.books = []', 'self.users = []'
-        super().__init__()
-
-    def update_book_copies(self): # polymorfism
-        ...
-
-
-@dataclass(frozen=True)
-class User:
-
-    _name: str
-    _user_id: int
-    _user_email: str
-
-    def salary_for_year(self):
         pass
 
+    def show_users(self): # show all users
+        if self._users is not None:
+            return '\n'.join([f'Name: {user._name}, ID: {user._user_id}, Email: {user._user_email}'for user in self._users])
+        else:
+            return 'No registered users'
 
-class Customer(User):
-    borrowed_books: list[Book] = []
+
+class Customer(User, Methods):
 
     def __init__(self, _name, _user_id, _user_email):
         super().__init__(_name, _user_id, _user_email)
+        self._borrowed_books: list[Book] = []
 
-    def show_borrowed_books(self): #show all books borrowed by Customers
-        return f'Borrowed books: {self.borrowed_books}'
+    def show_borrowed_books(self): #
+        if self._borrowed_books is not None:
+            return '\n'.join([f'Title: {book}'for book in self._borrowed_books])
+        else:
+            return 'No borrowed books'
+
+    def delete_book(self): # return book
+        pass
+
+    def take_book(self): # take book
+        pass
 
     def __str__(self):
-        return f'Customer:\nName: {self._name}, User email: {self._user_email}, User id: {self._user_id}, books: {self.borrowed_books}'
+        return f'Customer:\nName: {self._name}, user_email: {self._user_email}, user_ID: {self._user_id}'
 
 
-class Employee(User, Library):
-    pass
-# salary, payment
+class Employee(Library, Book, Methods):
 
+    def __init__(self,):
+        super().__init__()
+        self.borrowed_books: list[Book] = []
 
-def add_book(self):
-    pass
-# using append and ISBN
+    def show_borrowed_books(self): # show all borrowed books
+        if self.borrowed_books:
+            return '\n'.join([f'Title: {book._title}, Author: {book._author}'for book in self.borrowed_books])
+        else:
+            return 'No borrowed books'
 
+    def add_book(self): # add new book to library
+        pass
+    # using append and ISBN
 
-def delete_book(self):
-    pass
-# using del and ISBN
+    def delete_book(self): # delete book from library
+        pass
+    # using for def ISBN
 
 
 # cus = Customer('name', 7, 'any.email@gmail.com')
 # print(cus)
-books_lst: list[Book:[]] = [
-    ['The Last Wish', 'Andrzej Sapkowski', '978-0-316-05587-6'],
-    ['Sword of Destiny', 'Andrzej Sapkowski', '978-0-316-27805-7'],
-    ['Blood of Elves', 'Andrzej Sapkowski', '978-0-575-08636-0'],
-    ['Time of Contempt', 'Andrzej Sapkowski', '978-0-575-08637-7'],
-    ['Sword of Destiny', 'Andrzej Sapkowski', '978-0-316-27805-7'],
-    ['Sword of Destiny', 'Andrzej Sapkowski', '978-0-316-27805-7'],
-    ['Baptism of Fire', 'Andrzej Sapkowski', '978-0-575-08678-0']]
+# books_lst: list[Book:[]] = [
+#     ['The Last Wish', 'Andrzej Sapkowski', '978-0-316-05587-6'],
+#     ['Sword of Destiny', 'Andrzej Sapkowski', '978-0-316-27805-7'],
+#     ['Blood of Elves', 'Andrzej Sapkowski', '978-0-575-08636-0'],
+#     ['Time of Contempt', 'Andrzej Sapkowski', '978-0-575-08637-7'],
+#     ['Sword of Destiny', 'Andrzej Sapkowski', '978-0-316-27805-7'],
+#     ['Sword of Destiny', 'Andrzej Sapkowski', '978-0-316-27805-7'],
+#     ['Baptism of Fire', 'Andrzej Sapkowski', '978-0-575-08678-0']]
+
 library = Library()
-library.add_initial_books_lst(books_lst)
-# print(library.books)
-print(library.show_available_books())
-
-
-
+# cust1 = Customer('Kate', 1, 'kate.mail@gmail.com')
+# library.register_user(cust1)
+# cust2 = Customer('Max', 2, 'max.mail@gmail.com')
+# library.register_user(cust2)
+# cust3 = Customer('Ann', 3, 'ann.mail@gmail.com')
+# library.register_user(cust3)
+# print(library.show_users())
+empl = Employee()
+print(empl.show_borrowed_books())
 # def main():
 #     pass
-#
+
 # if __name__ == '__main__':
+
+# cust = Customer('kate', 1, 'kate.mail@gmail.com')
+# print(cust)
+
 #     main()
