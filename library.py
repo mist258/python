@@ -17,7 +17,7 @@
 # 4.Методи для взяття книжки з бібліотеки, та повернення.
 # 5.Методи для додавання книжки у бібліотеку та видаленню.
 import re
-from abc import ABC, abstractmethod
+from abc import ABC
 
 
 class Book:
@@ -62,18 +62,8 @@ class User(ABC):
         self._user_email = user_email
 
 
-class Methods(ABC): # contain abc methods
-    @abstractmethod
-    def show_borrowed_books(self):
-        pass
-
-    @abstractmethod
-    def delete_book(self):
-        pass
-
-
-class MethodsForManageLibrariesMixin:
-    def register_user(self, customer: User):
+class MixinMethodsForManageLibraries:
+    def register_user(self, customer: User): # DONE
         if hasattr(self, '_users'):
             if not isinstance(customer, User):
                 raise TypeError('Customer must be of type User')
@@ -82,52 +72,57 @@ class MethodsForManageLibrariesMixin:
             else:
                 raise ValueError('Customer already registered')
 
-    def show_available_books(self):  # show available books in all libraries
-        pass
+    def show_available_books(self,):  # show available books in all libraries #DONE
+        if hasattr(self, '_books'):
+            if self._books is not None:
+                for book in self._books:
+                    print(book)
+            else:
+                print('No books available')
 
-    def show_users(self):  # show all users
+    def show_users(self):  # show all users# lib1 = Library() # DONE
         if hasattr(self, '_users'):
             if self._users is not None:
-                return '\n'.join(
-                    [f'Name: {user._name}, ID: {user._user_id}, Email: {user._user_email}' for user in self._users])
+                for user in self._users:
+                    print(user)
             else:
-                return 'No registered users'
+                print('Field USERS is empty')
 
 
-class Library(MethodsForManageLibrariesMixin):
+class Library(MixinMethodsForManageLibraries):
 
     def __init__(self):
-        self._users: list[User] = []
+        self._users: list[User] = [] # list of all users in lib
         self._books: list = [] # list of all books
         self._borrowed_books: list = []
 
-    def register_user_in_lib(self, customer: User):
+    def register_user_in_lib(self, customer: User): # DONE
         self.register_user(customer)
 
     def show_available_books_in_lib(self):
-        self.show_available_books() # to do in MethodsForManageLibrariesMixin
+        self.show_available_books()  # DONE
 
-    def show_users_in_lib2(self): # to do in MethodsForManageLibrariesMixin
+    def show_users_in_lib1(self): # DONE
         self.show_users()
 
 
-class Library2(MethodsForManageLibrariesMixin):
+class Library2(MixinMethodsForManageLibraries):
     def __init__(self):
         self._users: list[User] = [] # list of all users
         self._books: list = [] # list of all books
         self._borrowed_books: list = []
 
-    def register_user_in_lib2(self, customer: User):
+    def register_user_in_lib2(self, customer: User): # DONE
         self.register_user(customer)
 
     def show_available_books_in_lib2(self):
-        self.show_available_books() # to do in MethodsForManageLibrariesMixin
+        self.show_available_books() # DONE
 
-    def show_users_in_lib2(self):
-        self.show_users() # to do in MethodsForManageLibrariesMixin
+    def show_users_in_lib2(self): # DONE
+        self.show_users()
 
 
-class Customer(User, Methods):
+class Customer(User):
 
     def __init__(self, _name, _user_id, _user_email):
         super().__init__(_name, _user_id, _user_email)
@@ -149,12 +144,11 @@ class Customer(User, Methods):
         return f'Customer:\nName: {self._name}, user_email: {self._user_email}, user_ID: {self._user_id}'
 
 
-class Employee(Library, Library2,  Book, Methods):
+class Employee(Library, Library2,  Book):
 
-    def __init__(self, name):
+    def __init__(self):
         super().__init__()
         self.borrowed_books: list[Book] = []
-        self.name = name
 
     def show_borrowed_books(self): # show all borrowed books ????????????
         if self.borrowed_books:
@@ -165,28 +159,32 @@ class Employee(Library, Library2,  Book, Methods):
     def delete_book(self): # delete book from library
         pass  # using for del ISBN
 
-    def find_book(self):
-        pass # using ISBN
+    @staticmethod
+    def find_book(book_isbn, *args):
+        pass
 
-# cus = Customer('name', 7, 'any.email@gmail.com')
-# print(cus)
-# empl = Employee('mark')
-book = Book('Sword of Destiny', 'Andrzej Sapkowski', '978-0-316-27805-7')
-print(book)
-# books_lst: list[Book:[]] = [
+    @staticmethod
+    def add_book(add_book, *args): #DONE
+        for book in args:
+            if hasattr(book, '_books'):
+                book._books.append(add_book)
+
+
+cus = Customer('Anny', 7, 'any.email@gmail.com')
+lib1 = Library()
+lib2 = Library2()
+empl = Employee()
+book1 = Book('Sword of Destiny', 'Andrzej Sapkowski', '978-0-316-27805-7')
+book2 = Book('Blood of Elves', 'Andrzej Sapkowski', '978-0-575-08636-0')
+book3 = Book('Time of Contempt', 'Andrzej Sapkowski', '978-0-575-08637-7')
+empl.add_book(book1, lib1, lib2)
+empl.add_book(book2, lib2, lib1)
+empl.add_book(book3, lib1, lib2)
+
+#     book = [
 #     ['Sword of Destiny', 'Andrzej Sapkowski', '978-0-316-27805-7'],
 #     ['Blood of Elves', 'Andrzej Sapkowski', '978-0-575-08636-0'],
 #     ['Time of Contempt', 'Andrzej Sapkowski', '978-0-575-08637-7'],
 #     ['Sword of Destiny', 'Andrzej Sapkowski', '978-0-316-27805-7'],
 #     ['Sword of Destiny', 'Andrzej Sapkowski', '978-0-316-27805-7'],
 #     ['Baptism of Fire', 'Andrzej Sapkowski', '978-0-575-08678-0']]
-
-# def main():
-#     pass
-
-# if __name__ == '__main__':
-
-# cust = Customer('kate', 1, 'kate.mail@gmail.com')
-# print(cust)
-
-#     main()
