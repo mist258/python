@@ -13,7 +13,7 @@
 # *******1.Клас User повинен мати такі атрибути як name, user_id.
 # *******2.Інфа про функціонал для Customer та Employee, де ви самі повинні розібратись які атрибути де мають бути та як це буде виглядати.
 # *******3.Атрибути borrowed_books, salary, library.
-# 4.Методи для взяття книжки з бібліотеки, та повернення.
+# *******4.Методи для взяття книжки з бібліотеки, та повернення.
 # *******5.Методи для додавання книжки у бібліотеку та видаленню.
 import re
 from abc import ABC
@@ -90,15 +90,8 @@ class MixinMethodsForManageLibraries:
             if self._users is not None:
                 for user in self._users:
                     print(user)
-                    return user
             else:
                 print('Field USERS is empty')
-
-    def show_borrowed_books_in_lib(self):
-        if hasattr(self, '_borrowed_books'):
-            if self._borrowed_books is not None:
-                for book in self._borrowed_books:
-                    print(book)
 
     def give_book_for_customer(self, customer_id: User, book_title): # Done
 
@@ -141,9 +134,6 @@ class Library(MixinMethodsForManageLibraries):
     def show_users_in_lib1(self): # DONE
         self.show_users()
 
-    def show_borrowed_books_in_lib1(self):
-        self.show_borrowed_books_in_lib()
-
     def give_book_for_customer_lib1(self, customer_id, book_title): # DONE
         self.give_book_for_customer(customer_id, book_title)
 
@@ -163,9 +153,6 @@ class Library2(MixinMethodsForManageLibraries):
     def show_users_in_lib2(self): # DONE
         self.show_users()
 
-    def show_borrowed_books_in_lib2(self):
-        self.show_borrowed_books_in_lib()
-
     def give_book_for_customer_lib2(self, customer_id, book_title): # DONE
         self.give_book_for_customer(customer_id, book_title)
 
@@ -175,20 +162,19 @@ class Customer(User):
     def __init__(self, _name, _user_id, _user_email):
         super().__init__(_name, _user_id, _user_email)
         self._borrowed_books: list = []
+        self.removed_books = []
 
     def show_borrowed_books(self): # show books borrowed by customers DONE
         if self._borrowed_books is not None:
             for book in self._borrowed_books:
                 return book
 
-    def delete_book(self, book_title, customer: User, *args): # equivalent to returning a book to library
-        for lib in args:
-            if hasattr(lib, '_users'):
-                for user in lib._users: # ????????????????????????????????
-                    if customer == user:
-                        pass
-            if hasattr(self, '_books'):
-                pass
+    def delete_book(self, book_title): # equivalent to returning a book to library
+        for book in self._borrowed_books:
+            if book._title == book_title:
+                self.removed_books.append(book)
+                self._borrowed_books.remove(book)
+                break
 
     def __str__(self):
         return f'Customer:\nName: {self._name}, user_email: {self._user_email}, user_ID: {self._user_id}'
@@ -215,7 +201,7 @@ class Employee(Library, Library2,  Book, Salary):
         super().__init__()
         self.valid_bonus(bonus)
 
-        self.borrowed_books: list[Book] = []
+        self.books_from_customer: list = [] # get books returned by customers
         self._salary = Salary(payment)
         self._bonus = bonus
 
@@ -227,26 +213,24 @@ class Employee(Library, Library2,  Book, Salary):
     def get_salary(self): # DONE
         return self._salary.get_pay_for_year() * self._bonus
 
-    def show_borrowed_books(self): # show all borrowed books DONE
-        if self.borrowed_books is not None:
-            for book in self._borrowed_books:
-                print(book)
-                return book
-        else:
-            print('No borrowed books')
+    def returned_books(self, book):
+        self.books_from_customer.append(book)
 
     @staticmethod
     def delete_book(book_isbn, *args): # delete book from all libraries DONE
+        found_book = False
         for lib in args:
             if hasattr(lib, '_books'):
                 for book in lib._books:
                     if hasattr(book, 'get_book_isbn') and book.get_book_isbn() == book_isbn:
                         lib._books.remove(book)
                         print(f'Deleted book: {book}')
+                        found_book = True
                         break  # delete the fist found book
-
-                    elif book.get_book_isbn != book_isbn:
-                        raise ValueError(f'Book ISBN {book_isbn} does not exist or invalid')
+                if found_book:
+                    break
+        if not found_book:
+            raise ValueError(f'Book ISBN {book_isbn} does not exist or invalid')
 
     @staticmethod
     def find_book(book_isbn, *args): # finds the book by ISBN in both libraries DONE
@@ -255,9 +239,7 @@ class Employee(Library, Library2,  Book, Salary):
                 for book in lib._books:
                     if hasattr(book, 'get_book_isbn') and book.get_book_isbn() == book_isbn:
                         print(book)
-                        return book
-                    else:
-                        raise ValueError('Book not found')
+                        break
 
     @staticmethod
     def add_book(add_book, *args): # add books to libraries DONE
@@ -271,20 +253,35 @@ book12 = Book('Time of Contempt', 'Andrzej Sapkowski', '978-0-575-08637-7')
 book13 = Book('Baptism of Fire', 'Andrzej Sapkowski', '978-0-575-08678-0')
 book2 = Book('Blood of Elves', 'Andrzej Sapkowski', '978-0-575-08636-0')
 book3 = Book('Time of Contempt', 'Andrzej Sapkowski', '978-0-575-08637-7')
+cust1 = Customer('Anny', 1, 'any.email@gmail.com')
+cust2 = Customer('Mark', 2, 'mark.email@gmail.com')
+cust3 = Customer('Nick', 3, 'nick.email@gmail.com')
+cust4 = Customer('Sam', 4, 'sam.email@gmail.com')
 lib1 = Library()
-lib2 = Library2()
-empl = Employee(45, 5)
-cust = Customer('Anny', 7, 'any.email@gmail.com')
-cust1 = Customer('Mark', 5, 'mark.email@gmail.com')
-lib1.register_user(cust)
 lib1.register_user(cust1)
-#print(lib1.show_users())
+lib1.register_user(cust2)
+lib2 = Library2()
+lib2.register_user(cust3)
+lib2.register_user(cust4)
+#print(lib1.show_users_in_lib1())
+#print(lib2.show_users_in_lib2())
+empl = Employee(45, 5)
+#print(empl.get_salary())
 empl.add_book(book1, lib1, lib2)
 empl.add_book(book2, lib1, lib2)
 empl.add_book(book3, lib1, lib2)
 empl.add_book(book12, lib1)
 empl.add_book(book13, lib1)
-lib1.give_book_for_customer_lib1(7, 'Sword of Destiny')
-print(lib1.show_borrowed_books_in_lib1())
-#print(cust.show_borrowed_books())
+#empl.find_book('978-0-575-08636-0', lib1, lib2)
+#empl.find_book('978-0-575-08678-0', lib1, lib2)
+#print(lib1.show_available_books_in_lib())
+#print(lib2.show_available_books_in_lib2())
+lib1.give_book_for_customer_lib1(1, 'Sword of Destiny')
+lib2.give_book_for_customer_lib2(3, 'Time of Contempt')
+#empl.delete_book('978-0-575-08637-7', lib1, lib2)
+
+#cust1.delete_book('Sword of Destiny')
+#print(cust1.show_borrowed_books())
+#print(cust1.show_borrowed_books())
+#print(cust3.show_borrowed_books())
 #print(empl.find_book(book1.get_book_isbn(), lib1, lib2))
