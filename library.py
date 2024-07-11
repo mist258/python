@@ -22,23 +22,26 @@ from abc import ABC
 class Book:
     __slots__ = ('_title', '_author', '__isbn', '_copies', '_total_copies')
 
-    def __init__(self, title, author, isbn):
+    def __init__(self, title: str, author: str, isbn: str):
         self.valid_isbn(isbn)
 
         self._title = title
         self._author = author
         self.__isbn = isbn
-        self._copies = 0 # only one library
-        self._total_copies = 0 # in all available libraries
+        self._copies: int = 0 # only one library
+        self._total_copies: int = 0 # in all available libraries
 
     @classmethod
-    def valid_isbn(cls, isbn): # checks for ISBN validity
+    def valid_isbn(cls, isbn: str): # checks for ISBN validity
         pattern_isbn = r'^(?:\d{3})-(?:\d{1,5})-(?:\d{1,7})-(?:\d{1,7})-(?:\d{1})$' #since 2007 ISBN contains 13 digits
         if not re.fullmatch(pattern_isbn, isbn):
             raise ValueError('Invalid ISBN number')
 
     def get_book_isbn(self):
         return self.__isbn
+
+    def get_book_title(self):
+        return self._title
 
     def check_availability(self): # check whether the book is available in library using ISBN
         pass
@@ -87,8 +90,39 @@ class MixinMethodsForManageLibraries:
             if self._users is not None:
                 for user in self._users:
                     print(user)
+                    return user
             else:
                 print('Field USERS is empty')
+
+    def show_borrowed_books_in_lib(self):
+        if hasattr(self, '_borrowed_books'):
+            if self._borrowed_books is not None:
+                for book in self._borrowed_books:
+                    print(book)
+
+    def give_book_for_customer(self, customer_id: User, book_title): # Done
+
+        found_cust = None
+        found_book = None
+
+        if hasattr(self, '_users'):
+            for user in self._users:
+                if hasattr(user, '_user_id'):
+                    if user._user_id == customer_id:
+                        found_cust = user
+                    break
+        if found_cust is None:
+            raise ValueError('Customer not registered')
+
+        if hasattr(self, '_books'):
+            for book in self._books:
+                if hasattr(book, '_title') and book._title == book_title:
+                    found_book = book
+                    break
+        if found_book is None:
+            raise ValueError('Book does not in library')
+
+        found_cust._borrowed_books.append(found_book)
 
 
 class Library(MixinMethodsForManageLibraries):
@@ -96,7 +130,7 @@ class Library(MixinMethodsForManageLibraries):
     def __init__(self):
         self._users: list[User] = [] # list of all users in lib
         self._books: list = [] # list of all books
-        self._borrowed_books: list = [] # show all borrowed books frolm library
+        self._borrowed_books: list[Book] = []
 
     def register_user_in_lib(self, customer: User): # DONE
         self.register_user(customer)
@@ -107,12 +141,18 @@ class Library(MixinMethodsForManageLibraries):
     def show_users_in_lib1(self): # DONE
         self.show_users()
 
+    def show_borrowed_books_in_lib1(self):
+        self.show_borrowed_books_in_lib()
+
+    def give_book_for_customer_lib1(self, customer_id, book_title): # DONE
+        self.give_book_for_customer(customer_id, book_title)
+
 
 class Library2(MixinMethodsForManageLibraries):
     def __init__(self):
-        self._users: list[User] = [] # list of all users
+        self._users: list = [] # list of all users
         self._books: list = [] # list of all books
-        self._borrowed_books: list = [] # show all borrowed books from library
+        self._borrowed_books: list[Book] = []
 
     def register_user_in_lib2(self, customer: User): # DONE
         self.register_user(customer)
@@ -122,6 +162,12 @@ class Library2(MixinMethodsForManageLibraries):
 
     def show_users_in_lib2(self): # DONE
         self.show_users()
+
+    def show_borrowed_books_in_lib2(self):
+        self.show_borrowed_books_in_lib()
+
+    def give_book_for_customer_lib2(self, customer_id, book_title): # DONE
+        self.give_book_for_customer(customer_id, book_title)
 
 
 class Customer(User):
@@ -133,10 +179,16 @@ class Customer(User):
     def show_borrowed_books(self): # show books borrowed by customers DONE
         if self._borrowed_books is not None:
             for book in self._borrowed_books:
-                print(book)
+                return book
 
-    def delete_book(self): # equivalent to returning the book
-        pass
+    def delete_book(self, book_title, customer: User, *args): # equivalent to returning a book to library
+        for lib in args:
+            if hasattr(lib, '_users'):
+                for user in lib._users: # ????????????????????????????????
+                    if customer == user:
+                        pass
+            if hasattr(self, '_books'):
+                pass
 
     def __str__(self):
         return f'Customer:\nName: {self._name}, user_email: {self._user_email}, user_ID: {self._user_id}'
@@ -163,7 +215,7 @@ class Employee(Library, Library2,  Book, Salary):
         super().__init__()
         self.valid_bonus(bonus)
 
-        self.borrowed_books: list = []
+        self.borrowed_books: list[Book] = []
         self._salary = Salary(payment)
         self._bonus = bonus
 
@@ -192,6 +244,7 @@ class Employee(Library, Library2,  Book, Salary):
                         lib._books.remove(book)
                         print(f'Deleted book: {book}')
                         break  # delete the fist found book
+
                     elif book.get_book_isbn != book_isbn:
                         raise ValueError(f'Book ISBN {book_isbn} does not exist or invalid')
 
@@ -212,41 +265,26 @@ class Employee(Library, Library2,  Book, Salary):
             if hasattr(book, '_books'):
                 book._books.append(add_book)
 
-    def give_book_for_customer(self, book_title, *args):  # give a book for customer DONE
-        for lib in args:
-            if hasattr(lib, '_books'):
-                for book in lib._books:
-                    if hasattr(book, '_title') and book._title == book_title:
-                        book_index = lib._books.index(book)
-                        book_for_customer = lib._books.pop(book_index)
-                        self._borrowed_books.append(book_for_customer)
-                        cust._borrowed_books.append(book_for_customer)
-                        break
 
-
-cust = Customer('Anny', 7, 'any.email@gmail.com')
-lib1 = Library()
-lib2 = Library2()
-empl = Employee(45, 5)
-#print(empl.get_salary())
 book1 = Book('Sword of Destiny', 'Andrzej Sapkowski', '978-0-316-27805-7')
 book12 = Book('Time of Contempt', 'Andrzej Sapkowski', '978-0-575-08637-7')
 book13 = Book('Baptism of Fire', 'Andrzej Sapkowski', '978-0-575-08678-0')
 book2 = Book('Blood of Elves', 'Andrzej Sapkowski', '978-0-575-08636-0')
 book3 = Book('Time of Contempt', 'Andrzej Sapkowski', '978-0-575-08637-7')
+lib1 = Library()
+lib2 = Library2()
+empl = Employee(45, 5)
+cust = Customer('Anny', 7, 'any.email@gmail.com')
+cust1 = Customer('Mark', 5, 'mark.email@gmail.com')
+lib1.register_user(cust)
+lib1.register_user(cust1)
+#print(lib1.show_users())
 empl.add_book(book1, lib1, lib2)
-empl.add_book(book2, lib2, lib1)
+empl.add_book(book2, lib1, lib2)
 empl.add_book(book3, lib1, lib2)
 empl.add_book(book12, lib1)
 empl.add_book(book13, lib1)
-empl.give_book_for_customer('Sword of Destiny', lib1)
-empl.give_book_for_customer('Blood of Elves', lib1)
-#print(empl.show_borrowed_books())
-print(cust.show_borrowed_books())
+lib1.give_book_for_customer_lib1(7, 'Sword of Destiny')
+print(lib1.show_borrowed_books_in_lib1())
+#print(cust.show_borrowed_books())
 #print(empl.find_book(book1.get_book_isbn(), lib1, lib2))
-#     book = [
-#     ['Sword of Destiny', 'Andrzej Sapkowski', '978-0-316-27805-7'],
-#     ['Blood of Elves', 'Andrzej Sapkowski', '978-0-575-08636-0'],
-#     ['Time of Contempt', 'Andrzej Sapkowski', '978-0-575-08637-7'],
-#     ['Sword of Destiny', 'Andrzej Sapkowski', '978-0-316-27805-7'],
-#     ['Baptism of Fire', 'Andrzej Sapkowski', '978-0-575-08678-0']]
