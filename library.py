@@ -20,7 +20,10 @@ from abc import ABC
 
 
 class Book:
-    __slots__ = ('_title', '_author', '__isbn', '_copies', '_total_copies')
+    __slots__ = ('_title', '_author', '__isbn')
+
+    _copies: int = 0  # only one library
+    _total_copies = 0  # in all available libraries
 
     def __init__(self, title: str, author: str, isbn: str):
         self.valid_isbn(isbn)
@@ -28,8 +31,7 @@ class Book:
         self._title = title
         self._author = author
         self.__isbn = isbn
-        self._copies: int = 0 # only one library
-        self._total_copies: int = 0 # in all available libraries
+
 
     @classmethod
     def valid_isbn(cls, isbn: str): # checks for ISBN validity
@@ -43,14 +45,43 @@ class Book:
     def get_book_title(self):
         return self._title
 
-    def check_availability(self): # check whether the book is available in library using ISBN
-        pass
+    @staticmethod
+    def check_availability(book_isbn, *args): # check whether the book is available in library using ISBN
+        for lib in args:
+            if hasattr(lib, '_books'):
+                for book in lib._books:
+                    if book_isbn == book.get_book_isbn():
+                        print(f'Book \'{book._title}\' is available in libraries')
 
-    def update_total_copies(self): # update current books copies in all libraries
-        pass # total_copies = 0
+    @staticmethod
+    def update_total_copies(book_isbn, *args): # update current book copies in all libraries
 
-    def update_copies(self): #updates copies in only one library
-        pass
+        found_copies = False
+
+        for lib in args:
+            if hasattr(lib, '_books'):
+                for book in lib._books:
+                    if book_isbn == book.get_book_isbn():
+                        Book._total_copies += 1
+                        found_copies = True
+
+        if not found_copies:
+            raise ValueError(f'Book not found')
+        return Book._total_copies
+
+    @staticmethod
+    def update_copies(book_isbn, library): # updates copies in only one library
+
+        found_copy = False
+        if hasattr(library, '_books'):
+            for book in library._books:
+                if book_isbn == book.get_book_isbn():
+                    Book._copies += 1
+                    found_copy = True
+
+        if not found_copy:
+            raise ValueError(f'Book not found')
+        return Book._copies
 
     def __str__(self):
         return f'Book:\nTitle: {self._title}, Author:{self._author}, ISBN:{self.__isbn}'
@@ -68,7 +99,7 @@ class User(ABC):
 
 
 class MixinMethodsForManageLibraries:
-    def register_user(self, customer: User): # DONE
+    def register_user(self, customer: User): # registration users in library
         if hasattr(self, '_users'):
             if not isinstance(customer, User):
                 raise TypeError('Customer must be of type User')
@@ -77,7 +108,7 @@ class MixinMethodsForManageLibraries:
             else:
                 raise ValueError('Customer already registered')
 
-    def show_available_books(self,):  # show available books in all libraries #DONE
+    def show_available_books(self,):  # show available books in all libraries
         if hasattr(self, '_books'):
             if self._books is not None:
                 for book in self._books:
@@ -85,7 +116,7 @@ class MixinMethodsForManageLibraries:
             else:
                 print('No books available')
 
-    def show_users(self):  # show all users # DONE
+    def show_users(self):  # show all users
         if hasattr(self, '_users'):
             if self._users is not None:
                 for user in self._users:
@@ -93,7 +124,7 @@ class MixinMethodsForManageLibraries:
             else:
                 print('Field USERS is empty')
 
-    def give_book_for_customer(self, customer_id: User, book_title): # Done
+    def give_book_for_customer(self, customer_id: User, book_title): # give book for customer from library
 
         found_cust = None
         found_book = None
@@ -112,6 +143,7 @@ class MixinMethodsForManageLibraries:
                 if hasattr(book, '_title') and book._title == book_title:
                     found_book = book
                     break
+
         if found_book is None:
             raise ValueError('Book does not in library')
 
@@ -125,16 +157,16 @@ class Library(MixinMethodsForManageLibraries):
         self._books: list = [] # list of all books
         self._borrowed_books: list[Book] = []
 
-    def register_user_in_lib(self, customer: User): # DONE
+    def register_user_in_lib(self, customer: User):
         self.register_user(customer)
 
     def show_available_books_in_lib(self):
-        self.show_available_books()  # DONE
+        self.show_available_books()
 
-    def show_users_in_lib1(self): # DONE
+    def show_users_in_lib1(self):
         self.show_users()
 
-    def give_book_for_customer_lib1(self, customer_id, book_title): # DONE
+    def give_book_for_customer_lib1(self, customer_id, book_title):
         self.give_book_for_customer(customer_id, book_title)
 
 
@@ -144,16 +176,16 @@ class Library2(MixinMethodsForManageLibraries):
         self._books: list = [] # list of all books
         self._borrowed_books: list[Book] = []
 
-    def register_user_in_lib2(self, customer: User): # DONE
+    def register_user_in_lib2(self, customer: User):
         self.register_user(customer)
 
     def show_available_books_in_lib2(self):
-        self.show_available_books() # DONE
+        self.show_available_books()
 
-    def show_users_in_lib2(self): # DONE
+    def show_users_in_lib2(self):
         self.show_users()
 
-    def give_book_for_customer_lib2(self, customer_id, book_title): # DONE
+    def give_book_for_customer_lib2(self, customer_id, book_title):
         self.give_book_for_customer(customer_id, book_title)
 
 
@@ -164,12 +196,12 @@ class Customer(User):
         self._borrowed_books: list = []
         self.removed_books = []
 
-    def show_borrowed_books(self): # show books borrowed by customers DONE
+    def show_borrowed_books(self): # show books borrowed by customers
         if self._borrowed_books is not None:
             for book in self._borrowed_books:
                 return book
 
-    def delete_book(self, book_title): # equivalent to returning a book to library
+    def delete_book(self, book_title): #
         for book in self._borrowed_books:
             if book._title == book_title:
                 self.removed_books.append(book)
@@ -187,11 +219,11 @@ class Salary:
         self.payment = payment
 
     @classmethod
-    def valid_payment(cls, payment): # DONE
+    def valid_payment(cls, payment):
         if not isinstance(payment, (int, float)):
             raise TypeError('Payment must be of type int or float')
 
-    def get_pay_for_year(self): # DONE
+    def get_pay_for_year(self):
         return self.payment * 12
 
 
@@ -206,18 +238,18 @@ class Employee(Library, Library2,  Book, Salary):
         self._bonus = bonus
 
     @classmethod
-    def valid_bonus(cls, bonus): # DONE
+    def valid_bonus(cls, bonus):
         if not isinstance(bonus, (int, float)):
             raise TypeError('Bonus must be of type int or float')
 
-    def get_salary(self): # DONE
+    def get_salary(self):
         return self._salary.get_pay_for_year() * self._bonus
 
     def returned_books(self, book):
         self.books_from_customer.append(book)
 
     @staticmethod
-    def delete_book(book_isbn, *args): # delete book from all libraries DONE
+    def delete_book(book_isbn, *args): # delete book from all libraries
         found_book = False
         for lib in args:
             if hasattr(lib, '_books'):
@@ -233,7 +265,7 @@ class Employee(Library, Library2,  Book, Salary):
             raise ValueError(f'Book ISBN {book_isbn} does not exist or invalid')
 
     @staticmethod
-    def find_book(book_isbn, *args): # finds the book by ISBN in both libraries DONE
+    def find_book(book_isbn, *args): # finds the book by ISBN in both libraries
         for lib in args:
             if hasattr(lib, '_books'):
                 for book in lib._books:
@@ -242,16 +274,19 @@ class Employee(Library, Library2,  Book, Salary):
                         break
 
     @staticmethod
-    def add_book(add_book, *args): # add books to libraries DONE
+    def add_book(add_book, *args): # add books to libraries
         for book in args:
             if hasattr(book, '_books'):
                 book._books.append(add_book)
 
+#sequence of method calls
 
 book1 = Book('Sword of Destiny', 'Andrzej Sapkowski', '978-0-316-27805-7')
 book12 = Book('Time of Contempt', 'Andrzej Sapkowski', '978-0-575-08637-7')
 book13 = Book('Baptism of Fire', 'Andrzej Sapkowski', '978-0-575-08678-0')
 book2 = Book('Blood of Elves', 'Andrzej Sapkowski', '978-0-575-08636-0')
+book4 = Book('Blood of Elves', 'Andrzej Sapkowski', '978-0-575-08636-0')
+book5 = Book('Blood of Elves', 'Andrzej Sapkowski', '978-0-575-08636-0')
 book3 = Book('Time of Contempt', 'Andrzej Sapkowski', '978-0-575-08637-7')
 cust1 = Customer('Anny', 1, 'any.email@gmail.com')
 cust2 = Customer('Mark', 2, 'mark.email@gmail.com')
@@ -272,6 +307,8 @@ empl.add_book(book2, lib1, lib2)
 empl.add_book(book3, lib1, lib2)
 empl.add_book(book12, lib1)
 empl.add_book(book13, lib1)
+empl.add_book(book4, lib1)
+empl.add_book(book5, lib1)
 #empl.find_book('978-0-575-08636-0', lib1, lib2)
 #empl.find_book('978-0-575-08678-0', lib1, lib2)
 #print(lib1.show_available_books_in_lib())
@@ -279,9 +316,10 @@ empl.add_book(book13, lib1)
 lib1.give_book_for_customer_lib1(1, 'Sword of Destiny')
 lib2.give_book_for_customer_lib2(3, 'Time of Contempt')
 #empl.delete_book('978-0-575-08637-7', lib1, lib2)
-
 #cust1.delete_book('Sword of Destiny')
-#print(cust1.show_borrowed_books())
 #print(cust1.show_borrowed_books())
 #print(cust3.show_borrowed_books())
 #print(empl.find_book(book1.get_book_isbn(), lib1, lib2))
+#check_available = Book.check_availability('978-0-316-27805-7', lib2, lib1)
+#print(Book.update_total_copies('978-0-575-08636-0', lib1, lib2))
+#print(Book.update_copies('978-0-575-08636-0', lib2))
