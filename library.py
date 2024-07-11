@@ -1,20 +1,16 @@
-#Part 1 BOOK
-# *******1.Створити клас Book з відповідними атрибутами  title, author, isbn, copies(У одній бібліотеці), total_copies(По всім бібліотекам).
-# 2.Клас повинен мати метод check_availability який буде перевіряти чи є книга у бібліотеці.
-# 3.Метод update_total_copies який буде оновлювати загальну кількість копій книжок коли вони будуть змінюватись.
-# 4.Метод який буде оновлювати кількість книжок у конкретній бібліотеці(змінювати параметр copies у інстанса).
-# *******5.Клас повинен мати метод validate_isbn який буде валідувати правильність isbn коду(ISBN 0-061-96436-0). 	978-3-16-148410-0
-#Part 2 LIBRARY
-# *******1.Клас Library буде мати поля books, users. # теба створити 2 класи
-# *******2.Методи які дозволять зареєструвати юзера у бібліотеці
-# *******3.Методи які дозволять знайти книжку за isbn.
-# *******4.Методи які дозволять показати всі доступні книжки у бібліотеці.
-#Part 3 USER
-# *******1.Клас User повинен мати такі атрибути як name, user_id.
-# *******2.Інфа про функціонал для Customer та Employee, де ви самі повинні розібратись які атрибути де мають бути та як це буде виглядати.
-# *******3.Атрибути borrowed_books, salary, library.
-# *******4.Методи для взяття книжки з бібліотеки, та повернення.
-# *******5.Методи для додавання книжки у бібліотеку та видаленню.
+# Створіть функціонал для управління бібліотекою.
+# Бібліотека повинна мати такі класи: User, Book, Library, Customer, Employee.
+# Клас Book повинен мати такі атрибути як: title, author, isbn, copies(У одній бібліотеці), total_copies(По всім бібліотекам).
+# Клас повинен мати метод check_availability який буде перевіряти чи є книга у бібліотеці.
+# Метод update_total_copies який буде оновлювати загальну кількість копій книжок коли вони будуть змінюватись.
+# Метод який буде оновлювати кількість книжок у конкретній бібліотеці(змінювати параметр copies у інстанса).
+# Також клас повинен мати метод validate_isbn який буде валідувати правильність isbn коду(ISBN 0-061-96436-0).
+# Клас User повинен мати такі атрибути як name, user_id.
+# ДАлі буде інфа про функціонал для Customer та Employee, де ви самі повинні розібратись які атрибути де мають бути та як це буде виглядати.
+# Атрибути borrowed_books, salary, library. Методи для додавання книжки у бібліотеку та видаленню.
+# Методи для взяття книжки з бібліотеки, та повернення.
+# Клас Library буде мати поля books, users.
+# Методи які дозволять зареєструвати юзера у бібліотеці, знайти книжку за isbn, та показати всі доступні книжки у бібліотеці.
 import re
 from abc import ABC
 
@@ -191,10 +187,11 @@ class Library2(MixinMethodsForManageLibraries):
 
 class Customer(User):
 
+    removed_books = []
+
     def __init__(self, _name, _user_id, _user_email):
         super().__init__(_name, _user_id, _user_email)
         self._borrowed_books: list = []
-        self.removed_books = []
 
     def show_borrowed_books(self): # show books borrowed by customers
         if self._borrowed_books is not None:
@@ -207,6 +204,15 @@ class Customer(User):
                 self.removed_books.append(book)
                 self._borrowed_books.remove(book)
                 break
+
+    @staticmethod
+    def return_book(*args): # return book to lib
+        for lib in args:
+            if hasattr(lib, '_books'):
+                if Customer.removed_books is not None:
+                    for book in Customer.removed_books:
+                        lib._books.append(book)
+                        break
 
     def __str__(self):
         return f'Customer:\nName: {self._name}, user_email: {self._user_email}, user_ID: {self._user_id}'
@@ -323,3 +329,5 @@ lib2.give_book_for_customer_lib2(3, 'Time of Contempt')
 #check_available = Book.check_availability('978-0-316-27805-7', lib2, lib1)
 #print(Book.update_total_copies('978-0-575-08636-0', lib1, lib2))
 #print(Book.update_copies('978-0-575-08636-0', lib2))
+cust1.delete_book('Sword of Destiny')
+cust1.return_book(lib2)
