@@ -34,7 +34,7 @@ class Employee(Library, Library2,  Book, Salary):
             raise TypeError('Bonus must be of type int or float')
 
     def get_salary(self):
-        return self._salary.get_pay_for_year() * self._bonus
+        return self._salary.get_pay_for_year() + self._bonus
 
     def returned_books(self, book):
         self.books_from_customer.append(book)
@@ -56,7 +56,7 @@ class Employee(Library, Library2,  Book, Salary):
             raise ValueError(f'Book ISBN {book_isbn} does not exist or invalid')
 
     @staticmethod
-    def find_book(book_isbn, *args): # finds the book by ISBN in both libraries
+    def find_book(book_isbn, *args): # finds (check availability) the book by ISBN in both libraries
         for lib in args:
             if hasattr(lib, '_books'):
                 for book in lib._books:
@@ -69,3 +69,6 @@ class Employee(Library, Library2,  Book, Salary):
         for book in args:
             if hasattr(book, '_books'):
                 book._books.append(add_book)
+
+
+

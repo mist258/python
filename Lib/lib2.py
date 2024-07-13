@@ -20,3 +20,5 @@ class Library2(ManageLibraries):
 
     def give_book_for_customer_lib2(self, customer_id, book_title):
         self.give_book_for_customer(customer_id, book_title)
+
+

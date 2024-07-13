@@ -32,3 +32,5 @@ class Customer(User):
 
     def __str__(self):
         return f'Customer:\nName: {self._name}, user_email: {self._user_email}, user_ID: {self._user_id}'
+
+

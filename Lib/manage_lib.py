@@ -2,7 +2,9 @@ from base_user import User
 
 
 class ManageLibraries:
+
     def register_user(self, customer: User): # registration users in library
+
         if hasattr(self, '_users'):
             if not isinstance(customer, User):
                 raise TypeError('Customer must be of type User')
@@ -12,6 +14,7 @@ class ManageLibraries:
                 raise ValueError('Customer already registered')
 
     def show_available_books(self,):  # show available books in all libraries
+
         if hasattr(self, '_books'):
             if self._books is not None:
                 for book in self._books:
@@ -20,6 +23,7 @@ class ManageLibraries:
                 print('No books available')
 
     def show_users(self):  # show all users
+
         if hasattr(self, '_users'):
             if self._users is not None:
                 for user in self._users:
@@ -51,3 +55,4 @@ class ManageLibraries:
             raise ValueError('Book does not in library')
 
         found_cust._borrowed_books.append(found_book)
+

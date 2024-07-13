@@ -3,7 +3,6 @@ from base_book import Book
 from base_user import User
 
 class Library(ManageLibraries):
-
     def __init__(self):
         self._users: list[User] = [] # list of all users in lib
         self._books: list = [] # list of all books
@@ -20,3 +19,5 @@ class Library(ManageLibraries):
 
     def give_book_for_customer_lib1(self, customer_id, book_title):
         self.give_book_for_customer(customer_id, book_title)
+
+

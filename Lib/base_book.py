@@ -2,10 +2,10 @@ import re
 
 
 class Book:
+
     __slots__ = ('_title', '_author', '__isbn')
 
-    _copies: int = 0  # only one library
-    _total_copies = 0  # in all available libraries
+    _total_copies = 0  # in all available libraries or one lib
 
     def __init__(self, title: str, author: str, isbn: str):
         self.valid_isbn(isbn)
@@ -27,14 +27,6 @@ class Book:
         return self._title
 
     @staticmethod
-    def check_availability(book_isbn, *args):  # check whether the book is available in library using ISBN
-        for lib in args:
-            if hasattr(lib, '_books'):
-                for book in lib._books:
-                    if book_isbn == book.get_book_isbn():
-                        print(f'Book \'{book._title}\' is available in libraries')
-
-    @staticmethod
     def update_total_copies(book_isbn, *args):  # update current book copies in all libraries
 
         found_copies = False
@@ -49,20 +41,6 @@ class Book:
         if not found_copies:
             raise ValueError(f'Book not found')
         return Book._total_copies
-
-    @staticmethod
-    def update_copies(book_isbn, library):  # updates copies in only one library
-
-        found_copy = False
-        if hasattr(library, '_books'):
-            for book in library._books:
-                if book_isbn == book.get_book_isbn():
-                    Book._copies += 1
-                    found_copy = True
-
-        if not found_copy:
-            raise ValueError(f'Book not found')
-        return Book._copies
 
     def __str__(self):
         return f'Book:\nTitle: {self._title}, Author:{self._author}, ISBN:{self.__isbn}'
