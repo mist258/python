@@ -21,20 +21,17 @@ class Book:
         if not re.fullmatch(pattern_isbn, isbn):
             raise ValueError('Invalid ISBN number')
 
-    def check_availability(self):  # check books availability in a certain library
-        pass
+    def get_book_isbn(self):
+        return self.__isbn
+
+    def get_book_title(self):
+        return self._title
 
     def update_total_copies(self):  # update total quantity of books in all lib
         pass
 
     def update_copies(self):  # update copies quantity of books in one lib
         pass
-
-    def get_book_isbn(self):
-        return self.__isbn
-
-    def get_book_title(self):
-        return self._title
 
     def __str__(self):
         return f'Book:\nTitle: {self._title}, Author:{self._author}, ISBN:{self.__isbn}'

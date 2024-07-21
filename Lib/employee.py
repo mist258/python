@@ -42,7 +42,7 @@ class Employee(Salary):
     def delete_book_from_lst(self, book_isbn, lib):  # delete book from lib using ISBN DONE
         self.collection.delete_books(book_isbn, lib)
 
-    def finding_books(self, book_isbn, *args):
+    def finding_books(self, book_isbn, *args):  # DONE
         return self.collection.find_book(book_isbn, *args)
 
     def give_book_to_user(self, user):  # give book to user

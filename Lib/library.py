@@ -34,6 +34,8 @@ class Library:
                     if hasattr(book, 'get_book_isbn') and book.get_book_isbn() == book_isbn:
                         print(book)
                         return book
+                else:
+                    return f'Book not found'
 
     def show_available_books(self):  # show all books in lib DONE
         if self._books is not None:

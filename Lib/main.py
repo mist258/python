@@ -49,7 +49,7 @@ def main():
     #empl2.delete_book_from_lst('978-0-575-08678-0', library)
     #library.show_available_books()
 
-    print(empl2.finding_books('978-0-575-08637-7', library2, library))
+    print(empl2.finding_books('978-0-575-08637-7', library))
 
 if __name__ == "__main__":
     main()
