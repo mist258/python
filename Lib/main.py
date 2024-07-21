@@ -1,4 +1,8 @@
-from Lib import *
+from base_book import Book
+from customer import Customer
+from library import Library
+from employee import Employee
+
 
 def main():
     # class initialization
@@ -16,61 +20,36 @@ def main():
     cust3 = Customer('Nick', 3, 'nick.email@gmail.com')
     cust4 = Customer('Sam', 4, 'sam.email@gmail.com')
 
-    # class initialization
-    lib1 = Library()
-    lib1.register_user(cust1) # add user to lib1
-    lib1.register_user(cust2)
+    # class initialization Lib1
+    library = Library()
+    library.register_user(cust2, cust1)
+    #library.show_users()  #show all users in lib1
+
+    # class initialization Lib2
+    library2 = Library()
+    library2.register_user(cust4, cust3)
+    #library2.show_users()  #show all users in lib2
+
 
     # class initialization
-    lib2 = Library2()
-    lib2.register_user(cust3) # add user to lib1
-    lib2.register_user(cust4)
+    empl1 = Employee(1333, 100, library)
+    empl1.add_book_to_lst(book3, book4, book5, book6, book2)
 
-    # show users in libraries
-    # print(lib1.show_users_in_lib1())
-    # print(lib2.show_users_in_lib2())
+    empl2 = Employee(1222, 100, library2)
+    empl2.add_book_to_lst(book7, book4, book1, book6)
 
-    # class initialization
-    empl = Employee(1200, 100)
-    #print(empl.get_salary()) # get salary to employee
+    #print(f'\nLibrary 1')
+    #library.show_available_books()
+    #print(f'\nLibrary 2')
+    #library2.show_available_books()
+    # print(empl.get_salary()) #get salary to employee
 
-    # add book in both libraries or one
-    empl.add_book(book1, lib1, lib2)
-    empl.add_book(book2, lib1, lib2)
-    empl.add_book(book3, lib1, lib2)
-    empl.add_book(book4, lib1)
-    empl.add_book(book5, lib1)
-    empl.add_book(book6, lib1)
-    empl.add_book(book7, lib1)
+    #empl1.delete_book_from_lst('978-0-316-27805-7', library2)
+    #library2.show_available_books()
+    #empl2.delete_book_from_lst('978-0-575-08678-0', library)
+    #library.show_available_books()
 
-    # delete book from lib
-    #empl.delete_book('978-0-575-08637-7', lib1, lib2)
-
-    # find book (check availability) in libraries
-    #empl.find_book(book1.get_book_isbn(), lib1, lib2)
-    #empl.find_book(book6.get_book_isbn(), lib1, lib2)
-
-    # show available books in lib
-    # print(lib1.show_available_books_in_lib())
-    # print(lib2.show_available_books_in_lib2())
-
-    # give book for customer
-    lib1.give_book_for_customer_lib1(1, 'Sword of Destiny')
-    lib2.give_book_for_customer_lib2(3, 'Time of Contempt')
-
-    # show borrowed_books by customer
-    #print(cust1.show_borrowed_books())
-    #print(cust3.show_borrowed_books())
-
-    # delete book by customer
-    #cust1.delete_book('Sword of Destiny')
-    #print(cust1.show_borrowed_books())
-    #cust1.return_book(lib2) # return book
-
-    # show current number of books copies in both libraries or one lib (use books ISBN)
-    #print(Book.update_total_copies(book7.get_book_isbn(),  lib1))
-    #print(Book.update_total_copies(book7.get_book_isbn(),  lib1, lib2))
-
+    print(empl2.finding_books('978-0-575-08637-7', library2, library))
 
 if __name__ == "__main__":
     main()
