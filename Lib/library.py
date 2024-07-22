@@ -14,9 +14,12 @@ class Library:
     @staticmethod
     def delete_books(book_isbn, lib):  # DONE
         if hasattr(lib, '_books'):
-            for book in lib._books:
-                if hasattr(book, 'get_book_isbn') and book.get_book_isbn() == book_isbn:
-                    lib._books.remove(book)
+
+            for items in lib._books:
+                for book in items:
+
+                    if book.get_book_isbn() == book_isbn:
+                        items.remove(book)
 
     def register_user(self, *args):  # register user in lib DONE
         usrs = [user for user in args if user not in self._users and isinstance(user, Customer)]
@@ -29,15 +32,19 @@ class Library:
     @staticmethod
     def find_book(book_isbn, *args):  # find book using ISBN DONE
         for lib in args:
+
             if hasattr(lib, '_books'):
-                for book in lib._books:
-                    if hasattr(book, 'get_book_isbn') and book.get_book_isbn() == book_isbn:
-                        print(book)
-                        return book
+
+                for item in lib._books:
+                    for book in item:
+
+                        if book.get_book_isbn() == book_isbn:
+                            print(book)
+                            return book
                 else:
                     return f'Book not found'
 
     def show_available_books(self):  # show all books in lib DONE
         if self._books is not None:
-            for book in self._books:
-                print(book)
+            [print(book) for book_lst in self._books for book in book_lst]
+

@@ -37,10 +37,10 @@ class Employee(Salary):
         return self._salary.get_pay_for_year() + self._bonus
 
     def add_book_to_lst(self, *args):  # add book to lib DONE
-        self.collection.add_books(*args)
+        return self.collection.add_books(*args)
 
     def delete_book_from_lst(self, book_isbn, lib):  # delete book from lib using ISBN DONE
-        self.collection.delete_books(book_isbn, lib)
+        return self.collection.delete_books(book_isbn, lib)
 
     def finding_books(self, book_isbn, *args):  # DONE
         return self.collection.find_book(book_isbn, *args)

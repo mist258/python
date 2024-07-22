@@ -9,7 +9,9 @@ class Customer(User):
         self._borrowed_books = []
 
     def show_borrowed_books(self):
-        pass
+        lst_book = ([book for book in self._borrowed_books])
+        print(lst_book)
+        return lst_book
 
     def __str__(self):
         return f'Customer:\nName: {self._name}, user_email: {self._user_email}, user_ID: {self._user_id}'
