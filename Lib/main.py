@@ -67,7 +67,7 @@ def main():
 
     manage_copies = ManageBooksCopies()
     #print(manage_copies.update_total_copies(library2))
-    manage_copies.update_copies('978-0-575-08636-0', library)
+    print(manage_copies.update_copies('978-0-575-08637-7', library))
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 import re
+from collections import Counter
 
 
 class Book:
@@ -49,16 +50,16 @@ class ManageBooksCopies:
 
         return self.total_copies
 
-    def update_copies(self, book_isbn, lib):  # update copies quantity of books in one lib
-        self.copies = {}
+    def update_copies(self, book_isbn, lib):  # update copies quantity of books in one lib DONE
+        self.copies = []
 
         for item in lib._books:
             for book in item:
-                # book = str(book)
+                if book.get_book_isbn() == book_isbn:
+                    book = str(book)
+                    self.copies.append(book)
 
-                if book_isbn == book.get_book_isbn():
-                    self.copies[book] += 1
-
-
+        frequency =Counter(self.copies)
+        return frequency
 
 
