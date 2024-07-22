@@ -7,12 +7,12 @@ class Library:
         self._books = []
         self._users = []
 
-    def add_books(self, *args):  # DONE
+    def add_books(self, *args):
         for book in args:
             self._books.append(book)
 
     @staticmethod
-    def delete_books(book_isbn, lib):  # DONE
+    def delete_books(book_isbn, lib):
         if hasattr(lib, '_books'):
 
             for items in lib._books:
@@ -21,16 +21,16 @@ class Library:
                     if book.get_book_isbn() == book_isbn:
                         items.remove(book)
 
-    def register_user(self, *args):  # register user in lib DONE
+    def register_user(self, *args):  # register user in lib
         usrs = [user for user in args if user not in self._users and isinstance(user, Customer)]
         self._users.extend(usrs)
 
-    def show_users(self):  # DONE
+    def show_users(self):
         for user in self._users:
             print(user)
 
     @staticmethod
-    def find_book(book_isbn, *args):  # find book using ISBN DONE
+    def find_book(book_isbn, *args):  # find book using ISBN
         for lib in args:
 
             if hasattr(lib, '_books'):
@@ -44,7 +44,6 @@ class Library:
                 else:
                     return f'Book not found'
 
-    def show_available_books(self):  # show all books in lib DONE
+    def show_available_books(self):  # show all books in lib
         if self._books is not None:
             [print(book) for book_lst in self._books for book in book_lst]
-

@@ -26,8 +26,10 @@ class Book:
     def get_book_title(self):
         return self._title
 
-    def __str__(self):
+    def __repr__(self):
         return f'Book:Title: {self._title}, Author:{self._author}, ISBN:{self.__isbn}'
+
+
 
 
 class ManageBooksCopies:
@@ -35,7 +37,7 @@ class ManageBooksCopies:
         self.total_copies = None
         self.copies = None
 
-    def update_total_copies(self, *args):  # update total quantity of books in all lib DONE
+    def update_total_copies(self, *args):  # update total quantity of books in all lib
         self.total_copies = {}
 
         for lib in args:
@@ -50,7 +52,7 @@ class ManageBooksCopies:
 
         return self.total_copies
 
-    def update_copies(self, book_isbn, lib):  # update copies quantity of books in one lib DONE
+    def update_copies(self, book_isbn, lib):  # update copies quantity of book in one lib
         self.copies = []
 
         for item in lib._books:
@@ -59,7 +61,5 @@ class ManageBooksCopies:
                     book = str(book)
                     self.copies.append(book)
 
-        frequency =Counter(self.copies)
+        frequency = Counter(self.copies)
         return frequency
-
-

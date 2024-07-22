@@ -1,5 +1,5 @@
-
 from library import Library
+from customer import Customer
 
 
 class Salary:
@@ -36,17 +36,27 @@ class Employee(Salary):
     def get_salary(self):
         return self._salary.get_pay_for_year() + self._bonus
 
-    def add_book_to_lst(self, *args):  # add book to lib DONE
+    def add_book_to_lst(self, *args):  # add book to lib
         return self.collection.add_books(*args)
 
-    def delete_book_from_lst(self, book_isbn, lib):  # delete book from lib using ISBN DONE
+    def delete_book_from_lst(self, book_isbn, lib):  # delete book from lib using ISBN
         return self.collection.delete_books(book_isbn, lib)
 
-    def finding_books(self, book_isbn, *args):  # DONE
+    def finding_books(self, book_isbn, *args):  #
         return self.collection.find_book(book_isbn, *args)
 
-    def give_book_to_user(self, user):  # give book to user
-        pass
+    @staticmethod
+    def give_book_to_user(book_title, customer: Customer, *args):  # give book to user DONE
+        book_list = [book for lib in args if hasattr(lib, "_books") for sub_list in lib._books for book in sub_list] # return list all books in libs
+        for book in book_list:
+            if book.get_book_title() == book_title:
+                customer._borrowed_books.append(book)
+                book_list.remove(book)
+        print(book_list)
 
-    def return_book(self, book):  # return book from user
-        pass
+    def return_book(self, customer: Customer, book_isbn):  # return book from user
+        returned_book_list =[]
+        for book in customer._borrowed_books:
+            if book.get_book_title() == book_isbn:
+                returned_book_list.append(book)
+                customer._borrowed_books.remove(book)
